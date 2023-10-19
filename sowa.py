@@ -9,6 +9,7 @@ from vosk import Model, KaldiRecognizer
 
 import pyaudio
 import pygame
+import tracemalloc
 
 from sowa_utils import sowa_utils
 
@@ -24,7 +25,6 @@ recognizer = KaldiRecognizer(model, 16000)
 # create microphone stream
 mic = pyaudio.PyAudio()
 stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input_device_index=1, input=True, frames_per_buffer=16000)
-stream.start_stream()
 
 # create connection (boot mode is 9600)
 client = ModbusClient(method='rtu', port='/dev/ttyACM0', baudrate=230000, timeout=1.5)
@@ -34,6 +34,9 @@ client.connect()
 pygame.init()
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
+
+# starting the monitoring
+tracemalloc.start()
 
 idslave = 0x01
 lastCommand = ''
@@ -47,7 +50,11 @@ def play_audio(audioFileName):
 
 
 def get_command():
+    result = ""
     try:
+        if stream.is_stopped():
+            print('==== stream.is_stopped')
+
         data = stream.read(4096)
         if len(data) != 0:
             inputStr = ""
@@ -58,13 +65,14 @@ def get_command():
 
             command = json.loads(inputStr)
             partial = command.get("partial")
-            result = ""
+
             if (partial):
                 result = command["partial"]
-
-            return result
-    except OSError:
+    except Exception as e:
+        log.error('Failed getting command: %s', e)
         pass
+
+    return result
 
 
 def send_value(newValue):
@@ -125,7 +133,14 @@ def on_quit():
     stream.stop_stream()
     stream.close()
     mic.terminate()
+    tracemalloc.stop()
+    client.close()
     sys.exit()
+
+
+def show_memory():
+    currentMem, peakMem = tracemalloc.get_traced_memory()
+    print('==== currentMem: ' + str(currentMem) + ', peakMem: ' + str(peakMem))
 
 
 bad_words = sowa_utils.bad_words_load()
@@ -139,10 +154,9 @@ while True:
             process_command(command)
             lastCommand = command
             print('=======================================')
+            show_memory()
     except KeyboardInterrupt:  # Exit ctrl+c
         on_quit()
         raise SystemExit
-    except Exception:
-        tb = sys.exception().__traceback__
-        print('Exception: ' + str(tb))
-        pass
+    except Exception as e:
+        log.error('Failed processing: %s', e)

@@ -25,3 +25,16 @@ https://www.bareconductive.com/blogs/resources/how-to-change-the-volume-on-the-p
 2023-12-19:
 * исправлена ошибка обработки только первого слова из фразы
 * добавлено воспроизведение аудио записей как рекция на слово
+
+* Проблема:
+через какое-то время приложение выдает ошибку
+
+ALSA lib pcm.c:8545:(snd_pcm_recover) underrun occurred
+ALSA lib pcm.c:8545:(snd_pcm_recover) underrun occurred
+ALSA lib pcm.c:8545:(snd_pcm_recover) underrun occurred
+
+* Проблема:
+периодически перестает работать микрофон, закрывается stream
+
+* Проблема:
+есть утечка памяти при отправке данных в контроллер для реакции крылом

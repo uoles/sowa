@@ -22,29 +22,30 @@ https://raspberrytips.com/create-image-sd-card/
 http://cagewebdev.com/raspberry-pi-getting-audio-working/
 https://www.bareconductive.com/blogs/resources/how-to-change-the-volume-on-the-pi-cap
 ----------------------------------------------------------------------------
-2023-12-19:
+2023-12-19 Исправления:
 * исправлена ошибка обработки только первого слова из фразы
-* добавлено воспроизведение аудио записей как рекция на слово
+* добавлено воспроизведение аудио записей как реакция на слово
+* исправлено зависание программы
 
-* Проблема:
+---
+* Проблема (не роняет программу):
 через какое-то время приложение выдает ошибку
-
+```
 ALSA lib pcm.c:8545:(snd_pcm_recover) underrun occurred
 ALSA lib pcm.c:8545:(snd_pcm_recover) underrun occurred
 ALSA lib pcm.c:8545:(snd_pcm_recover) underrun occurred
-
-* Проблема:
+```
+* Проблема (решено):
 периодически перестает работать микрофон, закрывается stream
 
 * Проблема:
 есть утечка памяти при отправке данных в контроллер для реакции крылом
 
-* Проблема:
+* Проблема (решено):
 через какое-то время приложение выдает ошибку
-
+```
 ERROR:root:Failed getting command: [Errno -9981] Input overflowed
-
-Решение - 1:
-сделать реинициализацию stream
-Решение - 2:
-https://github.com/alphacep/vosk-api/issues/128
+```
+1. Решение-1 (+): сделать реинициализацию stream 
+2. Решение-2: https://github.com/alphacep/vosk-api/issues/128
+---

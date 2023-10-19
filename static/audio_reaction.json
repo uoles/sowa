@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "words": ["слова", "сова", "сама"],
+      "audio": "pidrilbnya.wav",
+      "time": ""
+    },
+    {
+      "words": ["кожаный", "кожаными", "кожа", "кожаных", "коже"],
+      "audio": "kojanui-epta-pranik.wav",
+      "time": ""
+    },
+    {
+      "words": ["панченко"],
+      "audio": "letchik-kosmonavt.wav",
+      "time": ""
+    },
+    {
+      "words": ["алиса"],
+      "audio": "alisa.wav",
+      "time": ""
+    },
+    {
+      "words": ["гавно", "говно"],
+      "audio": "jopa-vashe.wav",
+      "time": ""
+    },
+    {
+      "words": ["хуле", "хули", "хуйле", "хуйли", "хуй", "ли", "холли", "холле", "холли"],
+      "audio": "huily-ne-uley.wav",
+      "time": ""
+    }
+  ]
+}

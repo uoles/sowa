@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+	
+	<style>
+		body::after {
+			content: "";
+			background: url('/static/image/sbIch.jpg');
+			opacity: 0.5;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			position: absolute;
+			z-index: -1;   
+		}
+
+		hr.custom {
+			border-top: 2px solid white;
+		}
+	</style>
+	
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css" charset="utf-8"/>
+</head>
+
+<body>
+	<div class="container">
+		<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+			<a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+				<svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+				<span class="fs-4">SOWA | SETTINGS</span>
+			</a>
+		</header>
+	</div>
+
+	<div class="container">
+		<main>
+			<div class="row">
+				<div class="col">
+				</div>
+
+				<div class="col">
+					<div class="form-outline" >
+						<form method="POST" action="/save_bad_words">
+							<label for="badWords" class="form-label">Список слов для реакции крылом:</label>
+							<textarea class="form-control" id="badWords" rows="8"></textarea>
+							<button type="submit" class="w-100 btn btn-success" >Save</button>
+						</form>
+					</div>
+				</div>
+
+			</div>
+			<hr class="custom">
+		</main>
+	</div>
+
+
+	<script>
+		var txtFile = new XMLHttpRequest();
+		var allText = "File not found";
+		txtFile.onreadystatechange = function () {
+			if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+				allText = txtFile.responseText;
+			}
+			document.getElementById('badWords').innerHTML = allText;
+		}
+		txtFile.open("GET", "/static/bad_words.txt", true);
+		txtFile.send(null);
+
+<!--		async function postBadWords(url = '', data = {}) {-->
+<!--			const response = await fetch(url, {-->
+<!--				method: 'POST',-->
+<!--				mode: 'cors',-->
+<!--				cache: 'no-cache',-->
+<!--				credentials: 'same-origin',-->
+<!--				headers: {-->
+<!--					'Content-Type': 'application/json'-->
+<!--				},-->
+<!--				body: JSON.stringify(data)-->
+<!--			});-->
+<!--			return response.json();-->
+<!--		}-->
+
+<!--		postData('/save_bad_words', { text: 'This is the text I want to save' })-->
+<!--		.then(data => {-->
+<!--		// Autosaved successfully!-->
+<!--		});-->
+	</script>
+
+	<script src="/static/js/jquery.min.js" charset="utf-8"></script>
+	<script src="/static/js/bootstrap.min.js" charset="utf-8"></script>
+</body>
+</html>

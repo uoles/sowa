@@ -5,7 +5,6 @@ import json
 import threading
 
 from pymodbus.client.serial import ModbusSerialClient as ModbusClient
-
 from vosk import Model, KaldiRecognizer
 
 import pyaudio

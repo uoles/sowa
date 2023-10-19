@@ -18,8 +18,10 @@ sudo apt-get install lame
 ----------------------------------------------------------------------------
 > Не делать, отключается микрофон: >> amixer cset numid=3 1
 ----------------------------------------------------------------------------
-
 https://raspberrytips.com/create-image-sd-card/
 http://cagewebdev.com/raspberry-pi-getting-audio-working/
 https://www.bareconductive.com/blogs/resources/how-to-change-the-volume-on-the-pi-cap
 ----------------------------------------------------------------------------
+2023-12-19:
+* исправлена ошибка обработки только первого слова из фразы
+* добавлено воспроизведение аудио записей как рекция на слово

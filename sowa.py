@@ -50,11 +50,8 @@ def play_audio(audioFileName):
 
 
 def get_command():
-    result = ""
     try:
-        if stream.is_stopped():
-            print('==== stream.is_stopped')
-
+        result = ""
         data = stream.read(4096)
         if len(data) != 0:
             inputStr = ""
@@ -68,11 +65,23 @@ def get_command():
 
             if (partial):
                 result = command["partial"]
+
+            return result
     except Exception as e:
         log.error('Failed getting command: %s', e)
+        mic_stream_close()
+        mic_stream_create()
         pass
 
-    return result
+
+def mic_stream_create():
+    global stream
+    stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input_device_index=1, input=True,
+                      frames_per_buffer=16000)
+
+
+def mic_stream_close():
+    stream.close()
 
 
 def send_value(newValue):

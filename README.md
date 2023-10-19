@@ -38,3 +38,13 @@ ALSA lib pcm.c:8545:(snd_pcm_recover) underrun occurred
 
 * Проблема:
 есть утечка памяти при отправке данных в контроллер для реакции крылом
+
+* Проблема:
+через какое-то время приложение выдает ошибку
+
+ERROR:root:Failed getting command: [Errno -9981] Input overflowed
+
+Решение - 1:
+сделать реинициализацию stream
+Решение - 2:
+https://github.com/alphacep/vosk-api/issues/128

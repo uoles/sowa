@@ -24,7 +24,8 @@ recognizer = KaldiRecognizer(model, 16000)
 
 # create microphone stream
 mic = pyaudio.PyAudio()
-stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input_device_index=1, input=True, frames_per_buffer=16000)
+stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input_device_index=1, input=True,
+                  frames_per_buffer=16000)
 
 # create connection (boot mode is 9600)
 client = ModbusClient(method='rtu', port='/dev/ttyACM0', baudrate=230000, timeout=1.5)
@@ -39,8 +40,10 @@ pygame.mixer.music.set_volume(1.0)
 tracemalloc.start()
 
 idslave = 0x01
-lastCommand = ''
 isWingDown = True
+lastCommand = ''
+bad_words = sowa_utils.bad_words_load()
+audio_reactions = sowa_utils.audio_reactions_load()
 
 
 def play_audio(audioFileName):
@@ -96,28 +99,27 @@ def sowa_wing_up():
 
 
 def sowa_wing_down():
-    global isWingDown, lastCommand
+    global isWingDown
     send_value(0)
     isWingDown = True
-    lastCommand = ''
     print('=======================================')
 
 
-def process_command(value):
+def reaction(value):
     input_words = value.split(" ")
     print('input_words: ' + str(input_words))
+
+    # реакция крылом
+    if bad_words_contains(input_words):
+        print('command: ' + str(value))
+        sowa_wing_up()
+        threading.Timer(3.0, sowa_wing_down).start()
 
     # реакция звуком
     for item in audio_reactions:
         if compare_lists(input_words, item.get('words')):
             print('command: ' + str(value))
             play_audio(item.get('audio'))
-
-    # реакция крылом
-    if bad_words_contains(input_words):
-        print('command: ' + str(value))
-        sowa_wing_up()
-        threading.Timer(5.0, sowa_wing_down).start()
 
 
 def bad_words_contains(input_words):
@@ -152,20 +154,28 @@ def show_memory():
     print('==== currentMem: ' + str(currentMem) + ', peakMem: ' + str(peakMem))
 
 
-bad_words = sowa_utils.bad_words_load()
-audio_reactions = sowa_utils.audio_reactions_load()
+def process():
+    global lastCommand
+    while True:
+        try:
+            command = ''
+            if not pygame.mixer.music.get_busy() and isWingDown:
+                pygame.mixer.music.pause()
+                command = get_command()
 
-sowa_wing_down()
-while True:
-    try:
-        command = get_command()
-        if isWingDown and command and len(command) != 0 and command != lastCommand:
-            process_command(command)
-            lastCommand = command
-            print('=======================================')
-            show_memory()
-    except KeyboardInterrupt:  # Exit ctrl+c
-        on_quit()
-        raise SystemExit
-    except Exception as e:
-        log.error('Failed processing: %s', e)
+            if command and len(command) > 0 and command != lastCommand:
+                reaction(command)
+                show_memory()
+
+                lastCommand = command
+                print('=======================================')
+        except KeyboardInterrupt:  # Exit ctrl+c
+            on_quit()
+            raise SystemExit
+        except Exception as e:
+            log.error('Failed processing: %s', e)
+
+
+if __name__ == '__main__':
+    sowa_wing_down()
+    process()

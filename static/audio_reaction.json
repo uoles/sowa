@@ -29,6 +29,36 @@
       "words": ["хуле", "хули", "хуйле", "хуйли", "хуй", "ли", "холли", "холле", "холли"],
       "audio": "huily-ne-uley.wav",
       "time": ""
+    },
+    {
+      "words": ["сири", "сире"],
+      "audio": "siri.wav",
+      "time": ""
+    },
+    {
+      "words": [],
+      "audio": "fusyan.wav",
+      "time": "19:00"
+    },
+    {
+      "words": ["релиз", "тираж"],
+      "audio": "modul-teleportacii.wav",
+      "time": ""
+    },
+    {
+      "words": ["сроки"],
+      "audio": "sroki.wav",
+      "time": ""
+    },
+    {
+      "words": ["жопа", "дурак", "пидор", "чмо", "еблан", "блять"],
+      "audio": "horosh.wav",
+      "time": ""
+    },
+    {
+      "words": ["пси"],
+      "audio": "psi.wav",
+      "time": ""
     }
   ]
 }

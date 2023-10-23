@@ -106,19 +106,17 @@ def sowa_wing_down():
 
 
 def reaction(value):
+    print('command: ' + str(value))
     input_words = value.split(" ")
-    print('input_words: ' + str(input_words))
 
     # реакция крылом
     if bad_words_contains(input_words):
-        print('command: ' + str(value))
         sowa_wing_up()
         threading.Timer(3.0, sowa_wing_down).start()
 
     # реакция звуком
     for item in audio_reactions:
         if compare_lists(input_words, item.get('words')):
-            print('command: ' + str(value))
             play_audio(item.get('audio'))
 
 
@@ -160,10 +158,13 @@ def process():
         try:
             command = ''
             if not pygame.mixer.music.get_busy() and isWingDown:
-                pygame.mixer.music.pause()
+                pygame.mixer.music.stop()
                 command = get_command()
 
-            if command and len(command) > 0 and command != lastCommand:
+            if check_command(command, lastCommand):
+                print('command: ' + str(command))
+                print('lastCommand: ' + str(lastCommand))
+
                 reaction(command)
                 show_memory()
 
@@ -174,6 +175,15 @@ def process():
             raise SystemExit
         except Exception as e:
             log.error('Failed processing: %s', e)
+
+
+def check_command(command, last_command):
+    result = False
+    if command and len(command) > 0:
+        list_command = command.split(" ")
+        list_last_command = last_command.split(" ")
+        result = not compare_lists(list_command, list_last_command)
+    return result
 
 
 if __name__ == '__main__':

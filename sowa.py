@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import collections
 import sys
 import logging
 import json
@@ -41,17 +42,19 @@ tracemalloc.start()
 
 idslave = 0x01
 isWingDown = True
-lastCommand = ''
 bad_words = sowa_utils.bad_words_load()
 audio_reactions = sowa_utils.audio_reactions_load()
+last_commands = collections.deque(maxlen=5)
 
 
+# проиграть аудио файл
 def play_audio(audioFileName):
     print('play_audio: ' + str(audioFileName))
     pygame.mixer.music.load('static/audio/' + audioFileName)
     pygame.mixer.music.play()
 
 
+# считать команды с микрофона
 def get_command():
     try:
         result = ""
@@ -77,27 +80,32 @@ def get_command():
         pass
 
 
+# открыть поток с микрофона
 def mic_stream_create():
     global stream
     stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input_device_index=1, input=True,
                       frames_per_buffer=16000)
 
 
+# закрыть поток с микрофона
 def mic_stream_close():
     stream.close()
 
 
+# отправить значение в контроллер крыла совы
 def send_value(newValue):
     print('send new value: ' + str(newValue))
     client.write_register(address=0x0000, value=newValue, slave=idslave)
 
 
+# поднять крыло совы
 def sowa_wing_up():
     global isWingDown
     send_value(100)
     isWingDown = False
 
 
+# опустить крыло совы
 def sowa_wing_down():
     global isWingDown
     send_value(0)
@@ -105,10 +113,8 @@ def sowa_wing_down():
     print('=======================================')
 
 
-def reaction(value):
-    print('command: ' + str(value))
-    input_words = value.split(" ")
-
+# реагирование на команды
+def reaction(input_words):
     # реакция крылом
     if bad_words_contains(input_words):
         sowa_wing_up()
@@ -120,6 +126,7 @@ def reaction(value):
             play_audio(item.get('audio'))
 
 
+# сравнение входящих слов со списком слов для реакции крылом
 def bad_words_contains(input_words):
     set_input_words = set(input_words)
     if bad_words.intersection(set_input_words):
@@ -128,6 +135,7 @@ def bad_words_contains(input_words):
         return False
 
 
+# сравнение списков
 def compare_lists(input_words, expected):
     set_input_words = set(input_words)
     set_expected = set(expected)
@@ -137,6 +145,7 @@ def compare_lists(input_words, expected):
         return False
 
 
+# завершение программы
 def on_quit():
     print('\nПрограмма завершена')
     stream.stop_stream()
@@ -147,28 +156,32 @@ def on_quit():
     sys.exit()
 
 
+# показывает размер занимаемой памяти
 def show_memory():
     currentMem, peakMem = tracemalloc.get_traced_memory()
     print('==== currentMem: ' + str(currentMem) + ', peakMem: ' + str(peakMem))
 
 
+# основная процедура получения и обработки команд
 def process():
-    global lastCommand
+    global last_commands
     while True:
         try:
-            command = ''
+            input_words = list()
             if not pygame.mixer.music.get_busy() and isWingDown:
                 pygame.mixer.music.stop()
                 command = get_command()
+                input_words = check_command(command)
 
-            if check_command(command, lastCommand):
-                print('command: ' + str(command))
-                print('lastCommand: ' + str(lastCommand))
+            if input_words and len(input_words) > 0:
+                print('command: ' + str(input_words))
+                reaction(input_words)
 
-                reaction(command)
+                for word in input_words:
+                    last_commands.append(word)
+                print('last_commands: ' + str(last_commands))
+
                 show_memory()
-
-                lastCommand = command
                 print('=======================================')
         except KeyboardInterrupt:  # Exit ctrl+c
             on_quit()
@@ -177,12 +190,20 @@ def process():
             log.error('Failed processing: %s', e)
 
 
-def check_command(command, last_command):
-    result = False
-    if command and len(command) > 0:
+# выделяет слова, которые есть в новом потоке и нет в старом
+def exclude_words(command, last_command):
+    list_command = set(command)
+    list_last_command = set(last_command)
+    return list_command.difference(list_last_command)
+
+
+# проверка команды
+def check_command(command):
+    result = list()
+    if command and len(command) > 1:
         list_command = command.split(" ")
-        list_last_command = last_command.split(" ")
-        result = not compare_lists(list_command, list_last_command)
+        list_last_commands = list(last_commands)
+        result = list(exclude_words(list_command, list_last_commands))
     return result
 
 

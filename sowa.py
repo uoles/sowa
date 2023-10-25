@@ -208,5 +208,8 @@ def check_command(command):
 
 
 if __name__ == '__main__':
-    sowa_wing_down()
-    process()
+    try:
+        sowa_wing_down()
+        process()
+    except Exception as e:
+        log.error('Main failed processing: %s', e)

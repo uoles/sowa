@@ -41,8 +41,13 @@
       "time": "19:00"
     },
     {
-      "words": ["релиз", "тираж"],
+      "words": ["тираж"],
       "audio": "modul-teleportacii.wav",
+      "time": ""
+    },
+    {
+      "words": ["релиз"],
+      "audio": "reliz-povis.wav",
       "time": ""
     },
     {

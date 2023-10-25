@@ -49,3 +49,15 @@ ERROR:root:Failed getting command: [Errno -9981] Input overflowed
 1. Решение-1 (+): сделать реинициализацию stream 
 2. Решение-2: https://github.com/alphacep/vosk-api/issues/128
 ---
+
+
+Конфигурация ALSA:
+sudo nano /usr/share/alsa/alsa.conf
+
+Модифицировал конфиг:
+/etc/asound.conf
+https://russianblogs.com/article/3424436223/
+
+ModBus:
+https://github.com/pyhys/minimalmodbus
+https://minimalmodbus.readthedocs.io/en/stable/usage.html

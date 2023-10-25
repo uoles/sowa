@@ -12,8 +12,6 @@ import pyaudio
 import pygame
 import tracemalloc
 
-from sowa_utils import sowa_utils
-
 # log
 logging.basicConfig()
 log = logging.getLogger()
@@ -34,6 +32,7 @@ client.connect()
 
 # init PyGame for audio output
 pygame.init()
+pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=256, allowedchanges=0)
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
@@ -42,9 +41,31 @@ tracemalloc.start()
 
 idslave = 0x01
 isWingDown = True
-bad_words = sowa_utils.bad_words_load()
-audio_reactions = sowa_utils.audio_reactions_load()
 last_commands = collections.deque(maxlen=5)
+reaction_wing_enabled = False
+reaction_audio_enabled = False
+
+bad_words = set()
+audio_reactions = set()
+
+
+# загрузка справочника для реакции крылом
+def bad_words_load():
+    words = []
+    print('Загружаем справочник слов...')
+    with open('static/bad_words.txt', 'r', encoding='utf-8') as infile:
+        for line in infile:
+            words.append(line.replace('\n', ''))
+    print(words)
+    return set(words)
+
+
+# загрузка справочника для реакции звуком
+def audio_reactions_load():
+    print('Загружаем справочник аудио реакций...')
+    with open('static/audio_reaction.json', 'r', encoding='utf-8') as fJson:
+        data = json.load(fJson)
+    return data['items']
 
 
 # проиграть аудио файл
@@ -116,14 +137,16 @@ def sowa_wing_down():
 # реагирование на команды
 def reaction(input_words):
     # реакция крылом
-    if bad_words_contains(input_words):
-        sowa_wing_up()
-        threading.Timer(3.0, sowa_wing_down).start()
+    if reaction_wing_enabled:
+        if bad_words_contains(input_words):
+            sowa_wing_up()
+            threading.Timer(3.0, sowa_wing_down).start()
 
     # реакция звуком
-    for item in audio_reactions:
-        if compare_lists(input_words, item.get('words')):
-            play_audio(item.get('audio'))
+    if reaction_audio_enabled:
+        for item in audio_reactions:
+            if compare_lists(input_words, item.get('words')):
+                play_audio(item.get('audio'))
 
 
 # проверка наличия списка новых слов в списке слов для реакции крылом
@@ -220,7 +243,33 @@ def check_command(command):
 
 if __name__ == '__main__':
     try:
+        reaction_wing_enabled = False
+        reaction_audio_enabled = True
+
+        bad_words = bad_words_load()
+        audio_reactions = audio_reactions_load()
+
         sowa_wing_down()
         process()
     except Exception as e:
         log.error('main()::exception: %s', e)
+
+"""
+TODO:
+- Разделить код на классы 
+    управление совой
+    вывод аудио
+    запись команд
+    справочники
+    вспомогательные утилиты
+- Сделать воспроизведение аудио по времени и дням недели 
+    19:00 пн-чт     "пора домой"
+    19:00 пт        "пошли в фусян"
+    12:00 пн-пт     "пошли на стендап"
+    13:00 пн-пт     "пора пожрать"
+- Реализовать web-морду для управления настройками
+    вкл/выкл реакции крылом
+    вкл/выкл реакции звуком
+    редактирование справочника для реакции крылом
+    редактирование справочника для реакции звуком
+"""

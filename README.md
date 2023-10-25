@@ -19,7 +19,6 @@ sudo apt-get install lame
 > Не делать, отключается микрофон: >> amixer cset numid=3 1
 ----------------------------------------------------------------------------
 https://raspberrytips.com/create-image-sd-card/
-http://cagewebdev.com/raspberry-pi-getting-audio-working/
 https://www.bareconductive.com/blogs/resources/how-to-change-the-volume-on-the-pi-cap
 ----------------------------------------------------------------------------
 2023-12-19 Исправления:
@@ -61,3 +60,7 @@ https://russianblogs.com/article/3424436223/
 ModBus:
 https://github.com/pyhys/minimalmodbus
 https://minimalmodbus.readthedocs.io/en/stable/usage.html
+
+Raspberry Pi Audio
+https://www.raspberrypi.com/documentation/accessories/audio.html
+http://cagewebdev.com/raspberry-pi-getting-audio-working/

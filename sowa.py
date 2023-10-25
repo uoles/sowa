@@ -74,7 +74,7 @@ def get_command():
 
             return result
     except Exception as e:
-        log.error('Failed getting command: %s', e)
+        log.error('get_command()::exception: %s', e)
         mic_stream_close()
         mic_stream_create()
         pass
@@ -126,7 +126,7 @@ def reaction(input_words):
             play_audio(item.get('audio'))
 
 
-# сравнение входящих слов со списком слов для реакции крылом
+# проверка наличия списка новых слов в списке слов для реакции крылом
 def bad_words_contains(input_words):
     set_input_words = set(input_words)
     if bad_words.intersection(set_input_words):
@@ -135,7 +135,7 @@ def bad_words_contains(input_words):
         return False
 
 
-# сравнение списков
+# проверка наличия списка новых слов в ожидаемом списке слов
 def compare_lists(input_words, expected):
     set_input_words = set(input_words)
     set_expected = set(expected)
@@ -165,15 +165,21 @@ def show_memory():
 # основная процедура получения и обработки команд
 def process():
     global last_commands
+    last_input_words = set()
+
     while True:
         try:
             input_words = list()
             if not pygame.mixer.music.get_busy() and isWingDown:
                 pygame.mixer.music.stop()
                 command = get_command()
+                # удаляем из списка слова предыдущего списка
                 input_words = check_command(command)
 
-            if input_words and len(input_words) > 0:
+            # проверяем на наличие слов в списке
+            # дополнительно проверяем, что список слов отличается от предыдущего списка
+            # (!!! существуют ситуации, когда прилетает такой же список слов, как и предыдущий !!!)
+            if input_words and len(input_words) > 0 and not (last_input_words == input_words):
                 print('command: ' + str(input_words))
                 reaction(input_words)
 
@@ -181,13 +187,16 @@ def process():
                     last_commands.append(word)
                 print('last_commands: ' + str(last_commands))
 
+                last_input_words.clear()
+                last_input_words = set(input_words)
+
                 show_memory()
                 print('=======================================')
         except KeyboardInterrupt:  # Exit ctrl+c
             on_quit()
             raise SystemExit
         except Exception as e:
-            log.error('Failed processing: %s', e)
+            log.error('process()::exception: %s', e)
 
 
 # выделяет слова, которые есть в новом потоке и нет в старом
@@ -200,9 +209,11 @@ def exclude_words(command, last_command):
 # проверка команды
 def check_command(command):
     result = list()
-    if command and len(command) > 1:
-        list_command = command.split(" ")
+    # проверяем, что в строке больше 1 символа
+    if command and len(command.replace(' ', '')) > 1:
+        list_command = command.split(' ')
         list_last_commands = list(last_commands)
+        # удаляем из списка новых слов слова предыдущего списка
         result = list(exclude_words(list_command, list_last_commands))
     return result
 
@@ -212,4 +223,4 @@ if __name__ == '__main__':
         sowa_wing_down()
         process()
     except Exception as e:
-        log.error('Main failed processing: %s', e)
+        log.error('main()::exception: %s', e)

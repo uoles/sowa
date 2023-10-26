@@ -57,6 +57,9 @@ sudo nano /usr/share/alsa/alsa.conf
 /etc/asound.conf
 https://russianblogs.com/article/3424436223/
 
+Work with audio:
+https://stackoverflow.com/questions/17657103/play-wav-file-in-python
+
 ModBus:
 https://github.com/pyhys/minimalmodbus
 https://minimalmodbus.readthedocs.io/en/stable/usage.html
@@ -64,3 +67,10 @@ https://minimalmodbus.readthedocs.io/en/stable/usage.html
 Raspberry Pi Audio
 https://www.raspberrypi.com/documentation/accessories/audio.html
 http://cagewebdev.com/raspberry-pi-getting-audio-working/
+
+Pygame:
+https://proproprogs.ru/modules/dobavlyaem-zvuk-v-igrovoy-process-moduli-mixer-i-music
+https://runebook.dev/ru/docs/pygame/ref/mixer
+
+Pyaudio:
+https://blog-programmista.ru/post/103-python-ispolzuem-pyaudio-dla-zapisi-zvuka.html

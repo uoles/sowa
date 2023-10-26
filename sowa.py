@@ -32,7 +32,6 @@ client.connect()
 
 # init PyGame for audio output
 pygame.init()
-pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=256, allowedchanges=0)
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
@@ -97,12 +96,12 @@ def get_command():
     except Exception as e:
         log.error('get_command()::exception: %s', e)
         mic_stream_close()
-        mic_stream_create()
+        mic_stream_open()
         pass
 
 
 # открыть поток с микрофона
-def mic_stream_create():
+def mic_stream_open():
     global stream
     stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input_device_index=1, input=True,
                       frames_per_buffer=16000)

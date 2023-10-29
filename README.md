@@ -74,3 +74,16 @@ https://runebook.dev/ru/docs/pygame/ref/mixer
 
 Pyaudio:
 https://blog-programmista.ru/post/103-python-ispolzuem-pyaudio-dla-zapisi-zvuka.html
+
+Run script as service: 
+ - Install:
+> pip3 install add_service
+
+ - Usage:   
+> python -m add_service [shell_file/cmd] [user (default `whoami`)]
+
+ - Examples:
+>    start now           sudo systemctl start add_service0.service \
+    start with system   sudo systemctl enable add_service0.service
+
+![img.png](static/readme/run_as_service.png)

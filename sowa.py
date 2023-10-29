@@ -16,9 +16,21 @@ import tracemalloc
 logging.basicConfig()
 log = logging.getLogger()
 log.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+
+stdout_handler = logging.StreamHandler(sys.stdout)
+stdout_handler.setLevel(logging.DEBUG)
+stdout_handler.setFormatter(formatter)
+#
+# file_handler = logging.FileHandler('/tmp/sowa_logs.log')
+# file_handler.setLevel(logging.DEBUG)
+# file_handler.setFormatter(formatter)
+#
+# log.addHandler(file_handler)
+log.addHandler(stdout_handler)
 
 # load Vosk library
-model = Model(r"vosk-model-small-ru-0.22")
+model = Model(r"/home/forester/sowa/vosk-model-small-ru-0.22")
 recognizer = KaldiRecognizer(model, 16000)
 
 # create microphone stream
@@ -51,26 +63,26 @@ audio_reactions = set()
 # загрузка справочника для реакции крылом
 def bad_words_load():
     words = []
-    print('Загружаем справочник слов...')
-    with open('static/bad_words.txt', 'r', encoding='utf-8') as infile:
+    log.info('Загружаем справочник слов...')
+    with open('/home/forester/sowa/static/bad_words.txt', 'r', encoding='utf-8') as infile:
         for line in infile:
             words.append(line.replace('\n', ''))
-    print(words)
+    log.info(words)
     return set(words)
 
 
 # загрузка справочника для реакции звуком
 def audio_reactions_load():
-    print('Загружаем справочник аудио реакций...')
-    with open('static/audio_reaction.json', 'r', encoding='utf-8') as fJson:
+    log.info('Загружаем справочник аудио реакций...')
+    with open('/home/forester/sowa/static/audio_reaction.json', 'r', encoding='utf-8') as fJson:
         data = json.load(fJson)
     return data['items']
 
 
 # проиграть аудио файл
 def play_audio(audioFileName):
-    print('play_audio: ' + str(audioFileName))
-    pygame.mixer.music.load('static/audio/' + audioFileName)
+    log.info('play_audio: ' + str(audioFileName))
+    pygame.mixer.music.load('/home/forester/sowa/static/audio/' + audioFileName)
     pygame.mixer.music.play()
 
 
@@ -114,7 +126,7 @@ def mic_stream_close():
 
 # отправить значение в контроллер крыла совы
 def send_value(newValue):
-    print('send new value: ' + str(newValue))
+    log.info('send new value: ' + str(newValue))
     client.write_register(address=0x0000, value=newValue, slave=idslave)
 
 
@@ -130,7 +142,7 @@ def sowa_wing_down():
     global isWingDown
     send_value(0)
     isWingDown = True
-    print('=======================================')
+    log.info('=======================================')
 
 
 # реагирование на команды
@@ -169,7 +181,7 @@ def compare_lists(input_words, expected):
 
 # завершение программы
 def on_quit():
-    print('\nПрограмма завершена')
+    log.info('\nПрограмма завершена')
     stream.stop_stream()
     stream.close()
     mic.terminate()
@@ -181,7 +193,7 @@ def on_quit():
 # показывает размер занимаемой памяти
 def show_memory():
     currentMem, peakMem = tracemalloc.get_traced_memory()
-    print('==== currentMem: ' + str(currentMem) + ', peakMem: ' + str(peakMem))
+    log.info('==== currentMem: ' + str(currentMem) + ', peakMem: ' + str(peakMem))
 
 
 # основная процедура получения и обработки команд
@@ -202,18 +214,18 @@ def process():
             # дополнительно проверяем, что список слов отличается от предыдущего списка
             # (!!! существуют ситуации, когда прилетает такой же список слов, как и предыдущий !!!)
             if input_words and len(input_words) > 0 and not (last_input_words == input_words):
-                print('command: ' + str(input_words))
+                log.info('command: ' + str(input_words))
                 reaction(input_words)
 
                 for word in input_words:
                     last_commands.append(word)
-                print('last_commands: ' + str(last_commands))
+                log.info('last_commands: ' + str(last_commands))
 
                 last_input_words.clear()
                 last_input_words = set(input_words)
 
                 show_memory()
-                print('=======================================')
+                log.info('=======================================')
         except KeyboardInterrupt:  # Exit ctrl+c
             on_quit()
             raise SystemExit

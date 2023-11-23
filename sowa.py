@@ -137,7 +137,7 @@ def mic_stream_close():
 # отправить значение в контроллер крыла совы
 def send_value(newValue):
     log.info('send new value: ' + str(newValue))
-    # client.write_register(address=0x0000, value=newValue, slave=idslave)
+    client.write_register(address=0x0000, value=newValue, slave=idslave)
 
 
 # поднять крыло совы

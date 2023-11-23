@@ -60,7 +60,6 @@ reaction_audio_enabled = False
 
 bad_words = set()
 audio_reactions = set()
-sheduled_jobs = set()
 
 # загрузка справочника для реакции крылом
 def bad_words_load():
@@ -271,7 +270,7 @@ if __name__ == '__main__':
 
         bad_words = bad_words_load()
         audio_reactions = audio_reactions_load()
-        sheduled_jobs = sheduled_jobs_load()
+        sheduled_jobs_load()
 
         sowa_wing_down()
         process()

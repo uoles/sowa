@@ -10,6 +10,8 @@ from vosk import Model, KaldiRecognizer
 
 import pyaudio
 import pygame
+
+import schedule
 import tracemalloc
 
 # log
@@ -30,7 +32,7 @@ stdout_handler.setFormatter(formatter)
 log.addHandler(stdout_handler)
 
 # load Vosk library
-model = Model(r"/home/forester/sowa/vosk-model-small-ru-0.22")
+model = Model("./vosk-model-small-ru-0.22")
 recognizer = KaldiRecognizer(model, 16000)
 
 # create microphone stream
@@ -58,13 +60,13 @@ reaction_audio_enabled = False
 
 bad_words = set()
 audio_reactions = set()
-
+sheduled_jobs = set()
 
 # загрузка справочника для реакции крылом
 def bad_words_load():
     words = []
     log.info('Загружаем справочник слов...')
-    with open('/home/forester/sowa/static/bad_words.txt', 'r', encoding='utf-8') as infile:
+    with open('./static/bad_words.txt', 'r', encoding='utf-8') as infile:
         for line in infile:
             words.append(line.replace('\n', ''))
     log.info(words)
@@ -74,17 +76,26 @@ def bad_words_load():
 # загрузка справочника для реакции звуком
 def audio_reactions_load():
     log.info('Загружаем справочник аудио реакций...')
-    with open('/home/forester/sowa/static/audio_reaction.json', 'r', encoding='utf-8') as fJson:
+    with open('./static/audio_reaction.json', 'r', encoding='utf-8') as fJson:
         data = json.load(fJson)
     return data['items']
-
 
 # проиграть аудио файл
 def play_audio(audioFileName):
     log.info('play_audio: ' + str(audioFileName))
-    pygame.mixer.music.load('/home/forester/sowa/static/audio/' + audioFileName)
+    pygame.mixer.music.load('./static/audio/' + audioFileName)
     pygame.mixer.music.play()
 
+# загрузка действий по расписанию
+def sheduled_jobs_load():
+    log.info('Загружаем справочник расписаний...')
+    with open('./static/sheduled_jobs.json', 'r', encoding='utf-8') as fJson:
+        data = json.load(fJson)
+    if reaction_audio_enabled:
+        for item in data['items']:
+            schedule.every().day.at(str(item.get('time'))).do(play_audio, audioFileName=str(item.get('audio')))
+            log.info('scheduled: ' + str(item.get('time')) + '   ' + str(item.get('audio')))
+    return data['items']
 
 # считать команды с микрофона
 def get_command():
@@ -127,7 +138,7 @@ def mic_stream_close():
 # отправить значение в контроллер крыла совы
 def send_value(newValue):
     log.info('send new value: ' + str(newValue))
-    client.write_register(address=0x0000, value=newValue, slave=idslave)
+    # client.write_register(address=0x0000, value=newValue, slave=idslave)
 
 
 # поднять крыло совы
@@ -203,6 +214,7 @@ def process():
 
     while True:
         try:
+            schedule.run_pending()
             input_words = list()
             if not pygame.mixer.music.get_busy() and isWingDown:
                 pygame.mixer.music.stop()
@@ -259,6 +271,7 @@ if __name__ == '__main__':
 
         bad_words = bad_words_load()
         audio_reactions = audio_reactions_load()
+        sheduled_jobs = sheduled_jobs_load()
 
         sowa_wing_down()
         process()

@@ -1,64 +1,56 @@
 {
   "items": [
     {
+      "words": ["хой", "ой"],
+      "audio": "chelust_doloy.mp3"
+    },
+    {
+      "words": ["привет", "хай", "салют", "здорова", "здорово", "здравствуй"],
+      "audio": "have_a_nice_day.mp3"
+    },
+    {
       "words": ["слова", "сова", "сама"],
-      "audio": "pidrilbnya.wav",
-      "time": ""
+      "audio": "pidrilbnya.wav"
     },
     {
       "words": ["кожаный", "кожаными", "кожа", "кожаных", "коже"],
-      "audio": "kojanui-epta-pranik.wav",
-      "time": ""
+      "audio": "kojanui-epta-pranik.wav"
     },
     {
       "words": ["панченко"],
-      "audio": "letchik-kosmonavt.wav",
-      "time": ""
+      "audio": "letchik-kosmonavt.wav"
     },
     {
       "words": ["алиса"],
-      "audio": "alisa.wav",
-      "time": ""
+      "audio": "alisa.wav"
     },
     {
       "words": ["гавно", "говно"],
-      "audio": "jopa-vashe.wav",
-      "time": ""
+      "audio": "jopa-vashe.wav"
     },
     {
       "words": ["хуле", "хули", "хуйле", "хуйли", "хуй", "холли", "холле", "холли"],
-      "audio": "huily-ne-uley.wav",
-      "time": ""
+      "audio": "huily-ne-uley.wav"
     },
     {
       "words": ["сири", "сире"],
-      "audio": "siri.wav",
-      "time": ""
-    },
-    {
-      "words": [],
-      "audio": "fusyan.wav",
-      "time": "19:00"
+      "audio": "siri.wav"
     },
     {
       "words": ["тираж"],
-      "audio": "modul-teleportacii.wav",
-      "time": ""
+      "audio": "modul-teleportacii.wav"
     },
     {
       "words": ["релиз"],
-      "audio": "reliz-povis.wav",
-      "time": ""
+      "audio": "reliz-povis.wav"
     },
     {
       "words": ["сроки"],
-      "audio": "kakie-blyatb-sroki.wav",
-      "time": ""
+      "audio": "kakie-blyatb-sroki.wav"
     },
     {
       "words": ["жопа", "дурак", "пидор", "чмо", "еблан", "блядь"],
-      "audio": "horosh.wav",
-      "time": ""
+      "audio": "horosh.wav"
     }
   ]
 }

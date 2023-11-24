@@ -13,7 +13,7 @@ class RecordAudio(Thread):
     rate = 16000
     seconds = 60
 
-    model = Model(r"../vosk-model-small-ru-0.22")
+    model = Model(r"./vosk-model-small-ru-0.22")
     recognizer = KaldiRecognizer(model, chunk)
 
     mic = pyaudio.PyAudio()

@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "audio": "skoro_stand_up.wav",
+      "time": "11:55"
+    },
+    {
+      "audio": "pora_na_stand_up.wav",
+      "time": "12:00"
+    },
+    {
+      "audio": "uze_shest_pora_v_fusyan_poity_poest.wav",
+      "time": "18:00"
+    },
+    {
+      "audio": "fusyan.wav",
+      "time": "19:00"
+    }
+  ]
+}

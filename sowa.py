@@ -4,13 +4,14 @@ import sys
 import logging
 import json
 import threading
+import time
 
 from pymodbus.client.serial import ModbusSerialClient as ModbusClient
 from vosk import Model, KaldiRecognizer
 
 import pyaudio
 import pygame
-
+import random
 import schedule
 import tracemalloc
 
@@ -54,12 +55,12 @@ tracemalloc.start()
 
 idslave = 0x01
 isWingDown = True
-last_commands = collections.deque(maxlen=5)
 reaction_wing_enabled = False
 reaction_audio_enabled = False
 
 bad_words = set()
 audio_reactions = set()
+
 
 # загрузка справочника для реакции крылом
 def bad_words_load():
@@ -79,11 +80,17 @@ def audio_reactions_load():
         data = json.load(fJson)
     return data['items']
 
+
 # проиграть аудио файл
 def play_audio(audioFileName):
     log.info('play_audio: ' + str(audioFileName))
     pygame.mixer.music.load('./static/audio/' + audioFileName)
+    mic_stream_close()
     pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        time.sleep(1)
+    mic_stream_open()
+
 
 # загрузка действий по расписанию
 def sheduled_jobs_load():
@@ -96,13 +103,26 @@ def sheduled_jobs_load():
             log.info('scheduled: ' + str(item.get('time')) + '   ' + str(item.get('audio')))
     return data['items']
 
+
+# загрузка действий по расписанию
+def sheduled_jobs_load():
+    log.info('Загружаем справочник расписаний...')
+    with open('./static/sheduled_jobs.json', 'r', encoding='utf-8') as fJson:
+        data = json.load(fJson)
+    if reaction_audio_enabled:
+        for item in data['items']:
+            schedule.every().day.at(str(item.get('time'))).do(play_audio, audioFileName=str(item.get('audio')))
+            log.info('scheduled: ' + str(item.get('time')) + '   ' + str(item.get('audio')))
+    return data['items']
+
+
 # считать команды с микрофона
 def get_command():
     try:
         result = ""
-        data = stream.read(4096)
+        data = stream.read(10000)
         if len(data) != 0:
-            inputStr = ""
+            inputStr = "{}"
             if recognizer.AcceptWaveform(data):
                 inputStr = recognizer.Result()
             else:
@@ -113,7 +133,8 @@ def get_command():
 
             if (partial):
                 result = command["partial"]
-
+            if len(result) > 1:
+                log.info("Detected: " + result)
             return result
     except Exception as e:
         log.error('get_command()::exception: %s', e)
@@ -167,7 +188,12 @@ def reaction(input_words):
     if reaction_audio_enabled:
         for item in audio_reactions:
             if compare_lists(input_words, item.get('words')):
-                play_audio(item.get('audio'))
+                audio_reaction = item.get('audio')
+                if type(audio_reaction) == list:
+                    play_audio(str(random.choice(audio_reaction)))
+                else:
+                    play_audio(str(audio_reaction))
+                break
 
 
 # проверка наличия списка новых слов в списке слов для реакции крылом
@@ -206,15 +232,19 @@ def show_memory():
     log.info('==== currentMem: ' + str(currentMem) + ', peakMem: ' + str(peakMem))
 
 
+def clear_last():
+    last_commands.clear()
+    last_input_words.clear()
+
+
 # основная процедура получения и обработки команд
 def process():
-    global last_commands
-    last_input_words = set()
-
+    timestamp = time.time()
     while True:
         try:
+            time.sleep(0.1)
             schedule.run_pending()
-            input_words = list()
+            input_words = set()
             if not pygame.mixer.music.get_busy() and isWingDown:
                 pygame.mixer.music.stop()
                 command = get_command()
@@ -224,17 +254,11 @@ def process():
             # проверяем на наличие слов в списке
             # дополнительно проверяем, что список слов отличается от предыдущего списка
             # (!!! существуют ситуации, когда прилетает такой же список слов, как и предыдущий !!!)
-            if input_words and len(input_words) > 0 and not (last_input_words == input_words):
+            delta = time.time() - timestamp
+            if input_words and len(input_words) > 0 and delta > 2:
                 log.info('command: ' + str(input_words))
                 reaction(input_words)
-
-                for word in input_words:
-                    last_commands.append(word)
-                log.info('last_commands: ' + str(last_commands))
-
-                last_input_words.clear()
-                last_input_words = set(input_words)
-
+                timestamp = time.time()
                 show_memory()
                 log.info('=======================================')
         except KeyboardInterrupt:  # Exit ctrl+c
@@ -253,13 +277,13 @@ def exclude_words(command, last_command):
 
 # проверка команды
 def check_command(command):
-    result = list()
+    result = set()
     # проверяем, что в строке больше 1 символа
     if command and len(command.replace(' ', '')) > 1:
         list_command = command.split(' ')
-        list_last_commands = list(last_commands)
         # удаляем из списка новых слов слова предыдущего списка
-        result = list(exclude_words(list_command, list_last_commands))
+        result.update(list_command)
+        result.update([command])
     return result
 
 

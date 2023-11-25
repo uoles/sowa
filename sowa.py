@@ -232,11 +232,6 @@ def show_memory():
     log.info('==== currentMem: ' + str(currentMem) + ', peakMem: ' + str(peakMem))
 
 
-def clear_last():
-    last_commands.clear()
-    last_input_words.clear()
-
-
 # основная процедура получения и обработки команд
 def process():
     timestamp = time.time()

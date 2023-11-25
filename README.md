@@ -76,6 +76,7 @@ Pyaudio:
 https://blog-programmista.ru/post/103-python-ispolzuem-pyaudio-dla-zapisi-zvuka.html
 
 Run script as service: 
+https://unix.stackexchange.com/questions/634410/start-python-script-at-startup
  - Install:
 > pip3 install add_service
 

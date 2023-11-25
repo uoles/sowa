@@ -61,6 +61,7 @@ reaction_audio_enabled = False
 bad_words = set()
 audio_reactions = set()
 
+
 # загрузка справочника для реакции крылом
 def bad_words_load():
     words = []
@@ -79,22 +80,26 @@ def audio_reactions_load():
         data = json.load(fJson)
     return data['items']
 
+
 # проиграть аудио файл
 def play_audio(audioFileName):
     log.info('play_audio: ' + str(audioFileName))
     pygame.mixer.music.load('./static/audio/' + audioFileName)
     pygame.mixer.music.play()
 
+
 # загрузка действий по расписанию
-def sheduled_jobs_load():
+def scheduled_jobs_load():
     log.info('Загружаем справочник расписаний...')
     with open('./static/sheduled_jobs.json', 'r', encoding='utf-8') as fJson:
         data = json.load(fJson)
+
     if reaction_audio_enabled:
         for item in data['items']:
             schedule.every().day.at(str(item.get('time'))).do(play_audio, audioFileName=str(item.get('audio')))
             log.info('scheduled: ' + str(item.get('time')) + '   ' + str(item.get('audio')))
     return data['items']
+
 
 # считать команды с микрофона
 def get_command():
@@ -270,7 +275,7 @@ if __name__ == '__main__':
 
         bad_words = bad_words_load()
         audio_reactions = audio_reactions_load()
-        sheduled_jobs_load()
+        scheduled_jobs_load()
 
         sowa_wing_down()
         process()

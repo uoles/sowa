@@ -5,8 +5,12 @@
       "audio": "chelust_doloy.mp3"
     },
     {
-      "words": ["привет", "хай", "салют", "здорова", "здорово", "здравствуй"],
-      "audio": "have_a_nice_day.mp3"
+      "words": ["добрый день"],
+      "audio": ["celny_den.mp3"]
+    },
+    {
+      "words": ["привет", "хай", "салют", "здорова", "здорово", "здравствуй", "добрый", "доброе"],
+      "audio": ["have_a_nice_day.mp3", "dobroy_raboty.mp3", "horoshego_dnya.mp3", "i_vam_ne_hvorat.mp3", "privet_privet.mp3", "salut_dobry.mp3", "salut_zloy.mp3"]
     },
     {
       "words": ["слова", "сова", "сама"],

@@ -10,7 +10,7 @@ from vosk import Model, KaldiRecognizer
 
 import pyaudio
 import pygame
-
+import random
 import schedule
 import tracemalloc
 
@@ -172,7 +172,12 @@ def reaction(input_words):
     if reaction_audio_enabled:
         for item in audio_reactions:
             if compare_lists(input_words, item.get('words')):
-                play_audio(item.get('audio'))
+                audio_reaction = item.get('audio')
+                if type(audio_reaction) == list:
+                    play_audio(str(random.choice(audio_reaction)))
+                else:
+                    play_audio(str(audio_reaction))
+                break
 
 
 # проверка наличия списка новых слов в списке слов для реакции крылом

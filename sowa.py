@@ -284,7 +284,7 @@ def check_command(command):
 
 if __name__ == '__main__':
     try:
-        reaction_wing_enabled = False
+        reaction_wing_enabled = True
         reaction_audio_enabled = True
 
         bad_words = bad_words_load()

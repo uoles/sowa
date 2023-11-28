@@ -1,10 +1,7 @@
 {
   "items": [
     {
-      "words": [
-        "хой",
-        "ой"
-      ],
+      "words": ["хой", "ой"],
       "audio": "chelust_doloy.mp3"
     },
     {
@@ -12,110 +9,51 @@
       "audio": ["celny_den.mp3"]
     },
     {
-      "words": [
-        "привет",
-        "хай",
-        "салют",
-        "здорова",
-        "здорово",
-        "здравствуй",
-        "добрый",
-        "доброе"
-      ],
-      "audio": [
-        "have_a_nice_day.mp3",
-        "dobroy_raboty.mp3",
-        "horoshego_dnya.mp3",
-        "i_vam_ne_hvorat.mp3",
-        "privet_privet.mp3",
-        "salut_dobry.mp3",
-        "salut_zloy.mp3"
-      ]
+      "words": ["привет", "хай", "салют", "здорова", "здорово", "здравствуй", "добрый", "доброе"],
+      "audio": ["svali_v_tuman.mp3", "otvali.mp3", "idi_rabotai.mp3"]
     },
     {
-      "words": [
-        "слова",
-        "сова",
-        "сама"
-      ],
-      "audio": "pidrilbnya.wav"
+      "words": ["слова", "сова", "сама"],
+      "audio": "sluga_i_rabotnik.mp3"
     },
     {
-      "words": [
-        "кожаный",
-        "кожаными",
-        "кожа",
-        "кожаных",
-        "коже"
-      ],
+      "words": ["кожаный", "кожаными", "кожа", "кожаных", "коже"],
       "audio": "kojanui-epta-pranik.wav"
     },
     {
-      "words": [
-        "панченко"
-      ],
+      "words": ["панченко"],
       "audio": "letchik-kosmonavt.wav"
     },
     {
-      "words": [
-        "алиса"
-      ],
+      "words": ["алиса"],
       "audio": "alisa.wav"
     },
     {
-      "words": [
-        "гавно",
-        "говно"
-      ],
+      "words": ["гавно", "говно"],
       "audio": "jopa-vashe.wav"
     },
     {
-      "words": [
-        "хуле",
-        "хули",
-        "хуйле",
-        "хуйли",
-        "хуй",
-        "холли",
-        "холле",
-        "холли"
-      ],
+      "words": ["хуле", "хули", "хуйле", "хуйли", "хуй", "холли", "холле", "холли"],
       "audio": "huily-ne-uley.wav"
     },
     {
-      "words": [
-        "сири",
-        "сире"
-      ],
+      "words": ["сири", "сире"],
       "audio": "siri.wav"
     },
     {
-      "words": [
-        "тираж"
-      ],
+      "words": ["тираж"],
       "audio": "modul-teleportacii.wav"
     },
     {
-      "words": [
-        "релиз"
-      ],
+      "words": ["релиз"],
       "audio": "reliz-povis.wav"
     },
     {
-      "words": [
-        "сроки"
-      ],
+      "words": ["сроки"],
       "audio": "kakie-blyatb-sroki.wav"
     },
     {
-      "words": [
-        "жопа",
-        "дурак",
-        "пидор",
-        "чмо",
-        "еблан",
-        "блядь"
-      ],
+      "words": ["жопа", "дурак", "пидор", "чмо", "еблан", "блядь"],
       "audio": "horosh.wav"
     }
   ]

@@ -98,7 +98,6 @@ def scheduled_jobs_load():
         for item in data['items']:
             schedule.every().day.at(str(item.get('time'))).do(play_audio, audioFileName=str(item.get('audio')))
             log.info('scheduled: ' + str(item.get('time')) + '   ' + str(item.get('audio')))
-    return data['items']
 
 
 # считать команды с микрофона
@@ -270,7 +269,7 @@ def check_command(command):
 
 if __name__ == '__main__':
     try:
-        reaction_wing_enabled = False
+        reaction_wing_enabled = True
         reaction_audio_enabled = True
 
         bad_words = bad_words_load()
@@ -281,23 +280,3 @@ if __name__ == '__main__':
         process()
     except Exception as e:
         log.error('main()::exception: %s', e)
-
-"""
-TODO:
-- Разделить код на классы 
-    управление совой
-    вывод аудио
-    запись команд
-    справочники
-    вспомогательные утилиты
-- Сделать воспроизведение аудио по времени и дням недели 
-    19:00 пн-чт     "пора домой"
-    19:00 пт        "пошли в фусян"
-    12:00 пн-пт     "пошли на стендап"
-    13:00 пн-пт     "пора пожрать"
-- Реализовать web-морду для управления настройками
-    вкл/выкл реакции крылом
-    вкл/выкл реакции звуком
-    редактирование справочника для реакции крылом
-    редактирование справочника для реакции звуком
-"""

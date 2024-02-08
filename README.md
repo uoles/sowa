@@ -53,9 +53,17 @@ ERROR:root:Failed getting command: [Errno -9981] Input overflowed
 Конфигурация ALSA:
 sudo nano /usr/share/alsa/alsa.conf
 
+Аудио конфигурация:
+alsamixer
+
 Модифицировал конфиг:
 /etc/asound.conf
 https://russianblogs.com/article/3424436223/
+
+sudo nano /etc/pulse/client.conf
+
+default-fragment-size-msec = 125
+default-fragments = 2
 
 Work with audio:
 https://stackoverflow.com/questions/17657103/play-wav-file-in-python
@@ -85,6 +93,7 @@ https://unix.stackexchange.com/questions/634410/start-python-script-at-startup
 
  - Examples:
 >    start now           sudo systemctl start add_service0.service \
-    start with system   sudo systemctl enable add_service0.service
+     start with system   sudo systemctl enable add_service0.service
 
 ![img.png](static/readme/run_as_service.png)
+

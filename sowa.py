@@ -18,18 +18,18 @@ import tracemalloc
 logging.basicConfig()
 log = logging.getLogger()
 log.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
-
-stdout_handler = logging.StreamHandler(sys.stdout)
-stdout_handler.setLevel(logging.DEBUG)
-stdout_handler.setFormatter(formatter)
+# formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+#
+# stdout_handler = logging.StreamHandler(sys.stdout)
+# stdout_handler.setLevel(logging.DEBUG)
+# stdout_handler.setFormatter(formatter)
 #
 # file_handler = logging.FileHandler('/tmp/sowa_logs.log')
 # file_handler.setLevel(logging.DEBUG)
 # file_handler.setFormatter(formatter)
 #
 # log.addHandler(file_handler)
-log.addHandler(stdout_handler)
+# log.addHandler(stdout_handler)
 
 # load Vosk library
 model = Model("./vosk-model-small-ru-0.22")
@@ -89,22 +89,23 @@ def play_audio(audioFileName):
 
 
 # загрузка действий по расписанию
-def scheduled_jobs_load():
-    log.info('Загружаем справочник расписаний...')
-    with open('./static/sheduled_jobs.json', 'r', encoding='utf-8') as fJson:
-        data = json.load(fJson)
-
-    if reaction_audio_enabled:
-        for item in data['items']:
-            schedule.every().day.at(str(item.get('time'))).do(play_audio, audioFileName=str(item.get('audio')))
-            log.info('scheduled: ' + str(item.get('time')) + '   ' + str(item.get('audio')))
+# def scheduled_jobs_load():
+#     log.info('Загружаем справочник расписаний...')
+#     with open('./static/sheduled_jobs.json', 'r', encoding='utf-8') as fJson:
+#         data = json.load(fJson)
+#
+#     if reaction_audio_enabled:
+#         for item in data['items']:
+#             schedule.every().day.at(str(item.get('time'))).do(play_audio, audioFileName=str(item.get('audio')))
+#             log.info('scheduled: ' + str(item.get('time')) + '   ' + str(item.get('audio')))
 
 
 # считать команды с микрофона
 def get_command():
     try:
         result = ""
-        data = stream.read(4096)
+        data = stream.read(4096, exception_on_overflow=False)
+
         if len(data) != 0:
             inputStr = ""
             if recognizer.AcceptWaveform(data):
@@ -217,7 +218,7 @@ def process():
 
     while True:
         try:
-            schedule.run_pending()
+            # schedule.run_pending()
             input_words = list()
             if not pygame.mixer.music.get_busy() and isWingDown:
                 pygame.mixer.music.stop()
@@ -274,7 +275,7 @@ if __name__ == '__main__':
 
         bad_words = bad_words_load()
         audio_reactions = audio_reactions_load()
-        scheduled_jobs_load()
+        # scheduled_jobs_load()
 
         sowa_wing_down()
         process()

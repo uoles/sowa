@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SOWA</title>
 	
 	<style>
 		body::after {
@@ -44,8 +44,8 @@
 				<div class="col">
 					<div class="form-outline" >
 						<form method="POST" action="/save_bad_words">
-							<label for="badWords" class="form-label">Список слов для реакции крылом:</label>
-							<textarea class="form-control" id="badWords" rows="8"></textarea>
+							<label for="badWordsId" class="form-label">Список слов для реакции крылом:</label>
+							<textarea name="badWords" class="form-control" id="badWordsId" rows="8"></textarea>
 							<button type="submit" class="w-100 btn btn-success" >Save</button>
 						</form>
 					</div>
@@ -64,29 +64,10 @@
 			if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
 				allText = txtFile.responseText;
 			}
-			document.getElementById('badWords').innerHTML = allText;
+			document.getElementById('badWordsId').innerHTML = allText;
 		}
 		txtFile.open("GET", "/static/bad_words.txt", true);
 		txtFile.send(null);
-
-<!--		async function postBadWords(url = '', data = {}) {-->
-<!--			const response = await fetch(url, {-->
-<!--				method: 'POST',-->
-<!--				mode: 'cors',-->
-<!--				cache: 'no-cache',-->
-<!--				credentials: 'same-origin',-->
-<!--				headers: {-->
-<!--					'Content-Type': 'application/json'-->
-<!--				},-->
-<!--				body: JSON.stringify(data)-->
-<!--			});-->
-<!--			return response.json();-->
-<!--		}-->
-
-<!--		postData('/save_bad_words', { text: 'This is the text I want to save' })-->
-<!--		.then(data => {-->
-<!--		// Autosaved successfully!-->
-<!--		});-->
 	</script>
 
 	<script src="/static/js/jquery.min.js" charset="utf-8"></script>

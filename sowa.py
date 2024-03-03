@@ -14,6 +14,8 @@ import pygame
 import schedule
 import tracemalloc
 
+from classes.WordsTimedCache import WordsTimedCache
+
 # log
 logging.basicConfig()
 log = logging.getLogger()
@@ -54,12 +56,12 @@ tracemalloc.start()
 
 idslave = 0x01
 isWingDown = True
-last_commands = collections.deque(maxlen=5)
 reaction_wing_enabled = False
 reaction_audio_enabled = False
 
 bad_words = set()
 audio_reactions = set()
+word_cache = WordsTimedCache(5)
 
 
 # загрузка справочника для реакции крылом
@@ -213,7 +215,6 @@ def show_memory():
 
 # основная процедура получения и обработки команд
 def process():
-    global last_commands
     last_input_words = set()
 
     while True:
@@ -234,8 +235,8 @@ def process():
                 reaction(input_words)
 
                 for word in input_words:
-                    last_commands.append(word)
-                log.info('last_commands: ' + str(last_commands))
+                    word_cache.put(word)
+                log.info('last_commands: ' + word_cache.keys_as_string())
 
                 last_input_words.clear()
                 last_input_words = set(input_words)
@@ -248,23 +249,16 @@ def process():
         except Exception as e:
             log.error('process()::exception: %s', e)
 
-
-# выделяет слова, которые есть в новом потоке и нет в старом
-def exclude_words(command, last_command):
-    list_command = set(command)
-    list_last_command = set(last_command)
-    return list_command.difference(list_last_command)
-
-
 # проверка команды
 def check_command(command):
     result = list()
     # проверяем, что в строке больше 1 символа
     if command and len(command.replace(' ', '')) > 1:
         list_command = command.split(' ')
-        list_last_commands = list(last_commands)
         # удаляем из списка новых слов слова предыдущего списка
-        result = list(exclude_words(list_command, list_last_commands))
+        result = list()
+        for command_word in list_command:
+            if word_cache.check(command_word): result.append(command_word)
     return result
 
 
